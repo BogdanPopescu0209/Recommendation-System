@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getaway</title>
+</head>
+
+<!-- Vue Library -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+<!-- Bootstrap library -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- Axios library -->
+<script src="axios.min.js"></script>
+
+<!-- Google Maps library -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCaeWrBuRjN36zXpYNQ608I3eG8QTil9Z4" async></script>
+
+<!-- Font Awesome library -->
+<script src="https://kit.fontawesome.com/7ee60675ac.js" crossorigin="anonymous"></script>
+
+<!-- Google Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+<!-- Plotly library -->
+<script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
+
+<!--CSS-->
+<link rel="stylesheet" href="./stylerecommendations.css">
+
+<body>
+
+    <div id="app">
+
+        <div class="container-fluid">
+
+            <div class="container-fluid">
+
+                <div class="row">
+
+                    <div class="col-lg"></div>
+
+                    <div class="col-lg">
+                        <p></p>
+                    </div>
+
+                    <div class="col-lg"></div>
+
+                </div>
+
+            </div>
+
+            <br>
+
+            <div class="container-fluid">
+
+                <div class="row">
+
+                    <div class="col-lg"></div>
+
+                    <div class="col-lg">
+
+                        <div class="center">
+
+                            <img class="logo" src="getaway.png" alt="logo.png">
+
+                            <button class="current" id="holiday1" v-on:click="currentTab('Holiday1')">Holiday 1</button>
+
+                            <button class="nav" id="holiday2" v-on:click="currentTab('Holiday2')">Holiday 2</button>
+
+                            <button class="nav" id="holiday3" v-on:click="currentTab('Holiday3')">Holiday 3</button>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg"></div>
+
+                </div>
+
+            </div>
+
+            <br>
+
+            <div class="container-fluid">
+
+                <!--Holiday 1-->
+                <div class="row">
+
+                    <div class="col-lg">
+
+                        <div id="map"></div>
+
+                    </div>
+
+                    <div class="col-lg" v-if="showHoliday1">
+
+                        <div class="holidayDetails">
+
+                            <button v-on:click="showMap(recommendations1.city.coordinates)" class="showAll">
+                                <i class="fa-solid fa-arrow-rotate-right"></i> Show All
+                            </button>
+
+                            <br>
+
+                            <div>
+
+                                <button class="styleIcons">
+                                    <i class="fa-solid fa-plane-arrival"></i>
+                                </button>
+                                <p class="pStyle"> {{recommendations1.checkin}} </p>
+
+                                <button class="styleIcons">
+                                    <i class="fa-solid fa-plane-departure"></i>
+                                </button>
+                                <p class="pStyle"> {{recommendations1.checkout}} </p>
+
+                                <button class="styleIcons">
+                                    <i class="fa-solid fa-cloud-moon"></i>
+                                </button>
+                                <p class="pStyle"> {{recommendations1.nights}} </p>
+
+                            </div>
+
+                            <button class="styleIcons" v-on:click="showHotels(recommendations1.city.coordinates)">
+                                <i class="fa-solid fa-hotel"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="hotels.length > 0">{{ hotels.length }} Hotels: </h2>
+                            <p class="pStyle" v-if="hotels.length > 0" v-for="item in hotels">{{ item.name + "; " }}</p>
+                            <p class="pStyle" v-if="hotels.length === 0"> No hotel rooms available for the specified
+                                dates </p>
+
+                            <br>
+
+                            <button class="styleIcons">
+                                <i class="fa-solid fa-plane"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="flights[0].interchange === 1"><a class="bookFlight"
+                                    v-bind:href="flights[0].website">Book Flight {{"£" +
+                                    flights[0].price}}</a> </h2>
+                            <h2 class="hStyle" v-if="flights[0].interchange === 2"><a class="bookFlight"
+                                    v-bind:href="flights[0].website">Book Flight {{"£" +
+                                    flights[0].price}}</a> </h2>
+                            <h2 class="hStyle" v-if="flights[0].interchange === 3"><a class="bookFlight"
+                                    v-bind:href="flights[0].website">Book Flight {{"£" +
+                                    flights[0].price}}</a> </h2>
+
+                            <!--Flight1-->
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Airline:
+                                {{
+                                flights[0].departure.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Departure
+                                from: {{
+                                flights[0].departure.iataCode }} at {{ flights[0].departure.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Arrival
+                                at: {{
+                                flights[0].arrival.iataCode }} at {{ flights[0].arrival.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 1">
+
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Airline:
+                                {{
+                                flights[1].departure.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Departure
+                                from: {{
+                                flights[1].departure.iataCode }} at {{ flights[1].departure.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Arrival
+                                at: {{
+                                flights[1].arrival.iataCode }} at {{ flights[1].arrival.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 1">
+
+                            <!--Flight2-->
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Airline:
+                                {{
+                                flights[0].departure1.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Departure
+                                from: {{
+                                flights[0].departure1.iataCode }} at {{ flights[0].departure1.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Arrival
+                                at: {{
+                                flights[0].arrival1.iataCode }} at {{ flights[0].arrival1.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 2">
+
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Airline:
+                                {{
+                                flights[0].departure2.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Departure
+                                from: {{
+                                flights[0].departure2.iataCode }} at {{ flights[0].departure2.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Arrival
+                                at: {{
+                                flights[0].arrival2.iataCode }} at {{ flights[0].arrival2.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 2">
+
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Airline:
+                                {{
+                                flights[1].departure1.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Departure
+                                from: {{
+                                flights[1].departure1.iataCode }} at {{ flights[1].departure1.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Arrival
+                                at: {{
+                                flights[1].arrival1.iataCode }} at {{ flights[1].arrival1.time }};</p>
+
+                            <hr class="flight" v-if="flights[1].interchange === 2">
+
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Airline:
+                                {{
+                                flights[1].departure2.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Departure
+                                from: {{
+                                flights[1].departure2.iataCode }} at {{ flights[1].departure2.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Arrival
+                                at: {{
+                                flights[1].arrival2.iataCode }} at {{ flights[1].arrival2.time }};</p>
+
+                            <hr class="flight" v-if="flights[1].interchange === 2">
+
+                            <!--Flight3-->
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Airline:
+                                {{
+                                flights[0].departure1.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Departure
+                                from: {{
+                                flights[0].departure1.iataCode}} at {{ flights[0].departure1.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Arrival
+                                at: {{
+                                flights[0].arrival1.iataCode}} at {{ flights[0].arrival1.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 3">
+
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Airline:
+                                {{
+                                flights[0].departure2.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Departure
+                                from: {{
+                                flights[0].departure2.iataCode}} at {{ flights[0].departure2.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">
+                                Arrival
+                                at: {{
+                                flights[0].arrival2.iataCode}} at {{ flights[0].arrival2.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 3">
+
+                            <p class="pStyleFlights"
+                                v-if="flights[0].interchange === 3 && Object.keys(flights[0]).length === 9">
+                                Airline:
+                                {{
+                                flights[0].departure3.carrierCode}};</p>
+                            <p class="pStyleFlights"
+                                v-if="flights[0].interchange === 3  && Object.keys(flights[0]).length === 9">
+                                Departure
+                                from: {{
+                                flights[0].departure3.iataCode}} at {{ flights[0].departure3.time }};</p>
+                            <p class="pStyleFlights"
+                                v-if="flights[0].interchange === 3 && Object.keys(flights[0]).length === 9">
+                                Arrival
+                                at: {{
+                                flights[0].arrival3.iataCode}} at {{ flights[0].arrival3.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 3">
+
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Airline:
+                                {{
+                                flights[0].departure1.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Departure
+                                from: {{
+                                flights[0].departure1.iataCode}} at {{ flights[0].departure1.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Arrival
+                                at: {{
+                                flights[0].arrival1.iataCode}} at {{ flights[0].arrival1.time }};</p>
+
+                            <hr class="flight" v-if="flights[1].interchange === 3">
+
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Airline:
+                                {{
+                                flights[0].departure2.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Departure
+                                from: {{
+                                flights[0].departure2.iataCode}} at {{ flights[0].departure2.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">
+                                Arrival
+                                at: {{
+                                flights[0].arrival2.iataCode}} at {{ flights[0].arrival2.time }};</p>
+
+                            <hr class="flight" v-if="flights[1].interchange === 3">
+
+                            <p class="pStyleFlights"
+                                v-if="flights[1].interchange === 3 && Object.keys(flights[1]).length === 9">
+                                Airline:
+                                {{
+                                flights[0].departure3.carrierCode}};</p>
+                            <p class="pStyleFlights"
+                                v-if="flights[1].interchange === 3  && Object.keys(flights[1]).length === 9">
+                                Departure
+                                from: {{
+                                flights[0].departure3.iataCode}} at {{ flights[0].departure3.time }};</p>
+                            <p class="pStyleFlights"
+                                v-if="flights[1].interchange === 3 && Object.keys(flights[1]).length === 9">
+                                Arrival
+                                at: {{
+                                flights[0].arrival3.iataCode}} at {{ flights[0].arrival3.time }};</p>
+
+                            <p class="pStyle" v-if="flights[0].interchange === 0">No flights available for the specified
+                                dates;</p>
+
+                            <br v-if="flights[0].interchange === 0">
+
+                            <button class="styleIcons" v-if="travelBicycle != ''">
+                                <i class="fa-solid fa-bicycle"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="travelBicycle != ''">Bicycle: </h2>
+                            <p class="pStyle" v-if="travelBicycle != ''">Distance: {{ travelBicycle.distance }}; Time:
+                                {{ travelBicycle.time }};</p>
+
+                            <br v-if="travelBicycle != ''">
+
+                            <button class="styleIcons" v-if="travelWalking != ''">
+                                <i class="fa-solid fa-person-walking"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="travelWalking != ''">Walking: </h2>
+                            <p class="pStyle" v-if="travelWalking != ''">Distance: {{ travelWalking.distance }}; Time:
+                                {{ travelWalking.time }};</p>
+
+                            <br v-if="travelWalking != ''">
+
+                            <button class="styleIcons" v-if="travelCar != ''">
+                                <i class="fa-solid fa-car"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="travelCar != ''">Car: </h2>
+                            <p class="pStyle" v-if="travelCar != ''">Distance: {{ travelCar.distance }}; Time:
+                                {{ travelCar.time }}; Average Cost: £{{ travelCar.cost }};</p>
+
+                            <br v-if="travelCar != ''">
+
+                            <button v-on:click="showCities(recommendations1.city.coordinates)" class="styleIcons"
+                                v-if="cities.length > 0">
+                                <i class="fa-solid fa-city"></i>
+                            </button>
+                            <h2 class="hStyle">City: </h2>
+                            <p class="pStyle" v-for="item in cities"> {{ recommendations1.city.name + ";"}}
+                            </p>
+
+                            <br v-if="museums.length > 0">
+
+                            <button v-on:click="showMuseums(recommendations1.city.coordinates)" class="styleIcons"
+                                v-if="museums.length > 0">
+                                <i class="fa-solid fa-building-columns"></i>
+                            </button>
+                            <h3 class="hStyle" v-if="museums.length > 0">{{ museums.length }} Museums: </h3>
+                            <p class="pStyle" v-if="museums.length > 0" v-for="item in museums"> {{ item + ";"}}
+                            </p>
+
+                            <br v-if="galleries.length > 0">
+
+                            <button v-on:click="showGalleries(recommendations1.city.coordinates)" class="styleIcons"
+                                v-if="galleries.length > 0">
+                                <i class="fa-solid fa-image"></i>
+                            </button>
+                            <h4 class="hStyle" v-if="galleries.length > 0">{{ galleries.length }} Art Galleries:
+                            </h4>
+                            <p class="pStyle" v-if="galleries.length > 0" v-for="item in galleries"> {{ item +
+                                ";"}}
+                            </p>
+
+                            <br v-if="attractions.length > 0">
+
+                            <button v-on:click="showAttractions(recommendations1.city.coordinates)" class="styleIcons"
+                                v-if="attractions.length > 0">
+                                <i class="fa-solid fa-flag"></i>
+                            </button>
+                            <h5 class="hStyle" v-if="attractions.length > 0">{{ attractions.length }} Tourist
+                                Attractions: </h5>
+                            <p class="pStyle" v-if="attractions.length > 0" v-for="item in attractions"> {{ item
+                                +
+                                ";"}}
+                            </p>
+
+                            <br v-if="restaurants.length > 0">
+
+                            <button v-on:click="showRestaurants(recommendations1.city.coordinates)" class="styleIcons"
+                                v-if="restaurants.length > 0">
+                                <i class="fa-solid fa-utensils"></i>
+                            </button>
+                            <h6 class="hStyle" v-if="restaurants.length > 0">{{ restaurants.length }}
+                                Restaurants:
+                            </h6>
+                            <p class="pStyle" v-if="restaurants.length > 0" v-for="item in restaurants"> {{ item
+                                +
+                                ";"}}
+                            </p>
+
+                            <br v-if="mountains.length > 0">
+
+                            <button v-on:click="showMountains(recommendations1.city.coordinates)" class="styleIcons"
+                                v-if="mountains.length > 0">
+                                <i class="fa-solid fa-person-skiing"></i>
+                            </button>
+                            <h6 class="hStyle" v-if="mountains.length > 0"> {{ mountains.length }} Mountains:
+                            </h6>
+                            <p class="pStyle" v-if="mountains.length > 0" v-for="item in mountains"> {{ item +
+                                ";"}}
+                            </p>
+
+                            <br v-if="beaches.length > 0">
+
+                            <button v-on:click="showBeaches(recommendations1.city.coordinates)" class="styleIcons"
+                                v-if="beaches.length > 0">
+                                <i class="fa-solid fa-umbrella-beach"></i>
+                            </button>
+                            <h6 class="hStyle" v-if="beaches.length > 0">{{ beaches.length }} Beaches: </h6>
+                            <p class="pStyle" v-if="beaches.length > 0" v-for="item in beaches"> {{ item + ";"}}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <!--Holiday 2-->
+                    <div class="col-lg" v-if="showHoliday2">
+
+                        <div class="holidayDetails">
+
+                            <button v-on:click="showMap(recommendations2.city.coordinates)" class="showAll">
+                                <i class="fa-solid fa-arrow-rotate-right"></i> Show All
+                            </button>
+
+                            <br>
+
+                            <div>
+
+                                <button class="styleIcons">
+                                    <i class="fa-solid fa-plane-arrival"></i>
+                                </button>
+                                <p class="pStyle"> {{recommendations2.checkin}} </p>
+
+                                <button class="styleIcons">
+                                    <i class="fa-solid fa-plane-departure"></i>
+                                </button>
+                                <p class="pStyle"> {{recommendations2.checkout}} </p>
+
+                                <button class="styleIcons">
+                                    <i class="fa-solid fa-cloud-moon"></i>
+                                </button>
+                                <p class="pStyle"> {{recommendations2.nights}} </p>
+
+                            </div>
+
+                            <button class="styleIcons" v-on:click="showHotels(recommendations2.city.coordinates)">
+                                <i class="fa-solid fa-hotel"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="hotels.length > 0">{{ hotels.length }} Hotels: </h2>
+                            <p class="pStyle" v-if="hotels.length > 0" v-for="item in hotels">{{ item.name + "; " }}</p>
+                            <p class="pStyle" v-if="hotels.length === 0"> No hotel rooms available for the specified
+                                dates </p>
+
+                            <br>
+
+                            <button class="styleIcons">
+                                <i class="fa-solid fa-plane"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="flights[0].interchange === 1"><a class="bookFlight"
+                                    v-bind:href="flights[0].website">Book Flight {{"£" +
+                                    flights[0].price}}</a> </h2>
+                            <h2 class="hStyle" v-if="flights[0].interchange === 2"><a class="bookFlight"
+                                    v-bind:href="flights[0].website">Book Flight {{"£" +
+                                    flights[0].price}}</a> </h2>
+                            <h2 class="hStyle" v-if="flights[0].interchange === 3"><a class="bookFlight"
+                                    v-bind:href="flights[0].website">Book Flight {{"£" +
+                                    flights[0].price}}</a> </h2>
+
+                            <!--Flight1-->
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Airline:
+                                {{
+                                flights[0].departure.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Departure
+                                from: {{
+                                flights[0].departure.iataCode }} at {{ flights[0].departure.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Arrival
+                                at: {{
+                                flights[0].arrival.iataCode }} at {{ flights[0].arrival.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 1">
+
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Airline:
+                                {{
+                                flights[1].departure.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Departure
+                                from: {{
+                                flights[1].departure.iataCode }} at {{ flights[1].departure.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Arrival
+                                at: {{
+                                flights[1].arrival.iataCode }} at {{ flights[1].arrival.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 1">
+
+                            <!--Flight2-->
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Airline:
+                                {{
+                                flights[0].departure1.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Departure
+                                from: {{
+                                flights[0].departure1.iataCode }} at {{ flights[0].departure1.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Arrival
+                                at: {{
+                                flights[0].arrival1.iataCode }} at {{ flights[0].arrival1.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 2">
+
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Airline:
+                                {{
+                                flights[0].departure2.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Departure
+                                from: {{
+                                flights[0].departure2.iataCode }} at {{ flights[0].departure2.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Arrival
+                                at: {{
+                                flights[0].arrival2.iataCode }} at {{ flights[0].arrival2.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 2">
+
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Airline:
+                                {{
+                                flights[1].departure1.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Departure
+                                from: {{
+                                flights[1].departure1.iataCode }} at {{ flights[1].departure1.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Arrival
+                                at: {{
+                                flights[1].arrival1.iataCode }} at {{ flights[1].arrival1.time }};</p>
+
+                            <hr class="flight" v-if="flights[1].interchange === 2">
+
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Airline:
+                                {{
+                                flights[1].departure2.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Departure
+                                from: {{
+                                flights[1].departure2.iataCode }} at {{ flights[1].departure2.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Arrival
+                                at: {{
+                                flights[1].arrival2.iataCode }} at {{ flights[1].arrival2.time }};</p>
+
+                            <hr class="flight" v-if="flights[1].interchange === 2">
+
+                            <!--Flight3-->
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Airline:
+                                {{
+                                flights[0].departure1.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Departure
+                                from: {{
+                                flights[0].departure1.iataCode}} at {{ flights[0].departure1.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Arrival
+                                at: {{
+                                flights[0].arrival1.iataCode}} at {{ flights[0].arrival1.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 3">
+
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Airline:
+                                {{
+                                flights[0].departure2.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Departure
+                                from: {{
+                                flights[0].departure2.iataCode}} at {{ flights[0].departure2.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">
+                                Arrival
+                                at: {{
+                                flights[0].arrival2.iataCode}} at {{ flights[0].arrival2.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 3">
+
+                            <p class="pStyleFlights"
+                                v-if="flights[0].interchange === 3 && Object.keys(flights[0]).length === 9">
+                                Airline:
+                                {{
+                                flights[0].departure3.carrierCode}};</p>
+                            <p class="pStyleFlights"
+                                v-if="flights[0].interchange === 3  && Object.keys(flights[0]).length === 9">
+                                Departure
+                                from: {{
+                                flights[0].departure3.iataCode}} at {{ flights[0].departure3.time }};</p>
+                            <p class="pStyleFlights"
+                                v-if="flights[0].interchange === 3 && Object.keys(flights[0]).length === 9">
+                                Arrival
+                                at: {{
+                                flights[0].arrival3.iataCode}} at {{ flights[0].arrival3.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 3">
+
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Airline:
+                                {{
+                                flights[0].departure1.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Departure
+                                from: {{
+                                flights[0].departure1.iataCode}} at {{ flights[0].departure1.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Arrival
+                                at: {{
+                                flights[0].arrival1.iataCode}} at {{ flights[0].arrival1.time }};</p>
+
+                            <hr class="flight" v-if="flights[1].interchange === 3">
+
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Airline:
+                                {{
+                                flights[0].departure2.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Departure
+                                from: {{
+                                flights[0].departure2.iataCode}} at {{ flights[0].departure2.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">
+                                Arrival
+                                at: {{
+                                flights[0].arrival2.iataCode}} at {{ flights[0].arrival2.time }};</p>
+
+                            <hr class="flight" v-if="flights[1].interchange === 3">
+
+                            <p class="pStyleFlights"
+                                v-if="flights[1].interchange === 3 && Object.keys(flights[1]).length === 9">
+                                Airline:
+                                {{
+                                flights[0].departure3.carrierCode}};</p>
+                            <p class="pStyleFlights"
+                                v-if="flights[1].interchange === 3  && Object.keys(flights[1]).length === 9">
+                                Departure
+                                from: {{
+                                flights[0].departure3.iataCode}} at {{ flights[0].departure3.time }};</p>
+                            <p class="pStyleFlights"
+                                v-if="flights[1].interchange === 3 && Object.keys(flights[1]).length === 9">
+                                Arrival
+                                at: {{
+                                flights[0].arrival3.iataCode}} at {{ flights[0].arrival3.time }};</p>
+
+                            <p class="pStyle" v-if="flights[0].interchange === 0">No flights available for the specified
+                                dates;</p>
+
+                            <br v-if="flights[0].interchange === 0">
+
+                            <button class="styleIcons" v-if="travelBicycle != ''">
+                                <i class="fa-solid fa-bicycle"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="travelBicycle != ''">Bicycle: </h2>
+                            <p class="pStyle" v-if="travelBicycle != ''">Distance: {{ travelBicycle.distance }}; Time:
+                                {{ travelBicycle.time }};</p>
+
+                            <br v-if="travelBicycle != ''">
+
+                            <button class="styleIcons" v-if="travelWalking != ''">
+                                <i class="fa-solid fa-person-walking"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="travelWalking != ''">Walking: </h2>
+                            <p class="pStyle" v-if="travelWalking != ''">Distance: {{ travelWalking.distance }}; Time:
+                                {{ travelWalking.time }};</p>
+
+                            <br v-if="travelWalking != ''">
+
+                            <button class="styleIcons" v-if="travelCar != ''">
+                                <i class="fa-solid fa-car"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="travelCar != ''">Car: </h2>
+                            <p class="pStyle" v-if="travelCar != ''">Distance: {{ travelCar.distance }}; Time:
+                                {{ travelCar.time }}; Average Cost: £{{ travelCar.cost }};</p>
+
+                            <br v-if="travelCar != ''">
+
+                            <button v-on:click="showCities(recommendations2.city.coordinates)" class="styleIcons"
+                                v-if="cities.length > 0">
+                                <i class="fa-solid fa-city"></i>
+                            </button>
+                            <h2 class="hStyle">City: </h2>
+                            <p class="pStyle" v-for="item in cities"> {{ recommendations2.city.name + ";"}}
+                            </p>
+
+                            <br v-if="museums.length > 0">
+
+                            <button v-on:click="showMuseums(recommendations2.city.coordinates)" class="styleIcons"
+                                v-if="museums.length > 0">
+                                <i class="fa-solid fa-building-columns"></i>
+                            </button>
+                            <h3 class="hStyle" v-if="museums.length > 0">{{ museums.length }} Museums: </h3>
+                            <p class="pStyle" v-if="museums.length > 0" v-for="item in museums"> {{ item + ";"}}
+                            </p>
+
+                            <br v-if="galleries.length > 0">
+
+                            <button v-on:click="showGalleries(recommendations2.city.coordinates)" class="styleIcons"
+                                v-if="galleries.length > 0">
+                                <i class="fa-solid fa-image"></i>
+                            </button>
+                            <h4 class="hStyle" v-if="galleries.length > 0">{{ galleries.length }} Art Galleries:
+                            </h4>
+                            <p class="pStyle" v-if="galleries.length > 0" v-for="item in galleries"> {{ item +
+                                ";"}}
+                            </p>
+
+                            <br v-if="attractions.length > 0">
+
+                            <button v-on:click="showAttractions(recommendations2.city.coordinates)" class="styleIcons"
+                                v-if="attractions.length > 0">
+                                <i class="fa-solid fa-flag"></i>
+                            </button>
+                            <h5 class="hStyle" v-if="attractions.length > 0">{{ attractions.length }} Tourist
+                                Attractions: </h5>
+                            <p class="pStyle" v-if="attractions.length > 0" v-for="item in attractions"> {{ item
+                                +
+                                ";"}}
+                            </p>
+
+                            <br v-if="restaurants.length > 0">
+
+                            <button v-on:click="showRestaurants(recommendations2.city.coordinates)" class="styleIcons"
+                                v-if="restaurants.length > 0">
+                                <i class="fa-solid fa-utensils"></i>
+                            </button>
+                            <h6 class="hStyle" v-if="restaurants.length > 0">{{ restaurants.length }}
+                                Restaurants:
+                            </h6>
+                            <p class="pStyle" v-if="restaurants.length > 0" v-for="item in restaurants"> {{ item
+                                +
+                                ";"}}
+                            </p>
+
+                            <br v-if="mountains.length > 0">
+
+                            <button v-on:click="showMountains(recommendations2.city.coordinates)" class="styleIcons"
+                                v-if="mountains.length > 0">
+                                <i class="fa-solid fa-person-skiing"></i>
+                            </button>
+                            <h6 class="hStyle" v-if="mountains.length > 0"> {{ mountains.length }} Mountains:
+                            </h6>
+                            <p class="pStyle" v-if="mountains.length > 0" v-for="item in mountains"> {{ item +
+                                ";"}}
+                            </p>
+
+                            <br v-if="beaches.length > 0">
+
+                            <button v-on:click="showBeaches(recommendations2.city.coordinates)" class="styleIcons"
+                                v-if="beaches.length > 0">
+                                <i class="fa-solid fa-umbrella-beach"></i>
+                            </button>
+                            <h6 class="hStyle" v-if="beaches.length > 0">{{ beaches.length }} Beaches: </h6>
+                            <p class="pStyle" v-if="beaches.length > 0" v-for="item in beaches"> {{ item + ";"}}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <!--Holiday 3-->
+                    <div class="col-lg" v-if="showHoliday3">
+
+                        <div class="holidayDetails">
+
+                            <button v-on:click="showMap(recommendations3.city.coordinates)" class="showAll">
+                                <i class="fa-solid fa-arrow-rotate-right"></i> Show All
+                            </button>
+
+                            <br>
+
+                            <div>
+
+                                <button class="styleIcons">
+                                    <i class="fa-solid fa-plane-arrival"></i>
+                                </button>
+                                <p class="pStyle"> {{recommendations3.checkin}} </p>
+
+                                <button class="styleIcons">
+                                    <i class="fa-solid fa-plane-departure"></i>
+                                </button>
+                                <p class="pStyle"> {{recommendations3.checkout}} </p>
+
+                                <button class="styleIcons">
+                                    <i class="fa-solid fa-cloud-moon"></i>
+                                </button>
+                                <p class="pStyle"> {{recommendations3.nights}} </p>
+
+                            </div>
+
+                            <button class="styleIcons" v-on:click="showHotels(recommendations3.city.coordinates)">
+                                <i class="fa-solid fa-hotel"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="hotels.length > 0">{{ hotels.length }} Hotels: </h2>
+                            <p class="pStyle" v-if="hotels.length > 0" v-for="item in hotels">{{ item.name + "; " }}</p>
+                            <p class="pStyle" v-if="hotels.length === 0"> No hotel rooms available for the specified
+                                dates </p>
+
+                            <br>
+
+                            <button class="styleIcons">
+                                <i class="fa-solid fa-plane"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="flights[0].interchange === 1"><a class="bookFlight"
+                                    v-bind:href="flights[0].website">Book Flight {{"£" +
+                                    flights[0].price}}</a> </h2>
+                            <h2 class="hStyle" v-if="flights[0].interchange === 2"><a class="bookFlight"
+                                    v-bind:href="flights[0].website">Book Flight {{"£" +
+                                    flights[0].price}}</a> </h2>
+                            <h2 class="hStyle" v-if="flights[0].interchange === 3"><a class="bookFlight"
+                                    v-bind:href="flights[0].website">Book Flight {{"£" +
+                                    flights[0].price}}</a> </h2>
+
+                            <!--Flight1-->
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Airline:
+                                {{
+                                flights[0].departure.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Departure
+                                from: {{
+                                flights[0].departure.iataCode }} at {{ flights[0].departure.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Arrival
+                                at: {{
+                                flights[0].arrival.iataCode }} at {{ flights[0].arrival.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 1">
+
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Airline:
+                                {{
+                                flights[1].departure.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Departure
+                                from: {{
+                                flights[1].departure.iataCode }} at {{ flights[1].departure.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 1">Arrival
+                                at: {{
+                                flights[1].arrival.iataCode }} at {{ flights[1].arrival.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 1">
+
+                            <!--Flight2-->
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Airline:
+                                {{
+                                flights[0].departure1.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Departure
+                                from: {{
+                                flights[0].departure1.iataCode }} at {{ flights[0].departure1.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Arrival
+                                at: {{
+                                flights[0].arrival1.iataCode }} at {{ flights[0].arrival1.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 2">
+
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Airline:
+                                {{
+                                flights[0].departure2.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Departure
+                                from: {{
+                                flights[0].departure2.iataCode }} at {{ flights[0].departure2.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 2">Arrival
+                                at: {{
+                                flights[0].arrival2.iataCode }} at {{ flights[0].arrival2.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 2">
+
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Airline:
+                                {{
+                                flights[1].departure1.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Departure
+                                from: {{
+                                flights[1].departure1.iataCode }} at {{ flights[1].departure1.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Arrival
+                                at: {{
+                                flights[1].arrival1.iataCode }} at {{ flights[1].arrival1.time }};</p>
+
+                            <hr class="flight" v-if="flights[1].interchange === 2">
+
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Airline:
+                                {{
+                                flights[1].departure2.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Departure
+                                from: {{
+                                flights[1].departure2.iataCode }} at {{ flights[1].departure2.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 2">Arrival
+                                at: {{
+                                flights[1].arrival2.iataCode }} at {{ flights[1].arrival2.time }};</p>
+
+                            <hr class="flight" v-if="flights[1].interchange === 2">
+
+                            <!--Flight3-->
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Airline:
+                                {{
+                                flights[0].departure1.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Departure
+                                from: {{
+                                flights[0].departure1.iataCode}} at {{ flights[0].departure1.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Arrival
+                                at: {{
+                                flights[0].arrival1.iataCode}} at {{ flights[0].arrival1.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 3">
+
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Airline:
+                                {{
+                                flights[0].departure2.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">Departure
+                                from: {{
+                                flights[0].departure2.iataCode}} at {{ flights[0].departure2.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[0].interchange === 3">
+                                Arrival
+                                at: {{
+                                flights[0].arrival2.iataCode}} at {{ flights[0].arrival2.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 3">
+
+                            <p class="pStyleFlights"
+                                v-if="flights[0].interchange === 3 && Object.keys(flights[0]).length === 9">
+                                Airline:
+                                {{
+                                flights[0].departure3.carrierCode}};</p>
+                            <p class="pStyleFlights"
+                                v-if="flights[0].interchange === 3  && Object.keys(flights[0]).length === 9">
+                                Departure
+                                from: {{
+                                flights[0].departure3.iataCode}} at {{ flights[0].departure3.time }};</p>
+                            <p class="pStyleFlights"
+                                v-if="flights[0].interchange === 3 && Object.keys(flights[0]).length === 9">
+                                Arrival
+                                at: {{
+                                flights[0].arrival3.iataCode}} at {{ flights[0].arrival3.time }};</p>
+
+                            <hr class="flight" v-if="flights[0].interchange === 3">
+
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Airline:
+                                {{
+                                flights[0].departure1.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Departure
+                                from: {{
+                                flights[0].departure1.iataCode}} at {{ flights[0].departure1.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Arrival
+                                at: {{
+                                flights[0].arrival1.iataCode}} at {{ flights[0].arrival1.time }};</p>
+
+                            <hr class="flight" v-if="flights[1].interchange === 3">
+
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Airline:
+                                {{
+                                flights[0].departure2.carrierCode}};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">Departure
+                                from: {{
+                                flights[0].departure2.iataCode}} at {{ flights[0].departure2.time }};</p>
+                            <p class="pStyleFlights" v-if="flights[1].interchange === 3">
+                                Arrival
+                                at: {{
+                                flights[0].arrival2.iataCode}} at {{ flights[0].arrival2.time }};</p>
+
+                            <hr class="flight" v-if="flights[1].interchange === 3">
+
+                            <p class="pStyleFlights"
+                                v-if="flights[1].interchange === 3 && Object.keys(flights[1]).length === 9">
+                                Airline:
+                                {{
+                                flights[0].departure3.carrierCode}};</p>
+                            <p class="pStyleFlights"
+                                v-if="flights[1].interchange === 3  && Object.keys(flights[1]).length === 9">
+                                Departure
+                                from: {{
+                                flights[0].departure3.iataCode}} at {{ flights[0].departure3.time }};</p>
+                            <p class="pStyleFlights"
+                                v-if="flights[1].interchange === 3 && Object.keys(flights[1]).length === 9">
+                                Arrival
+                                at: {{
+                                flights[0].arrival3.iataCode}} at {{ flights[0].arrival3.time }};</p>
+
+                            <p class="pStyle" v-if="flights[0].interchange === 0">No flights available for the specified
+                                dates;</p>
+
+                            <br v-if="flights[0].interchange === 0">
+
+                            <button class="styleIcons" v-if="travelBicycle != ''">
+                                <i class="fa-solid fa-bicycle"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="travelBicycle != ''">Bicycle: </h2>
+                            <p class="pStyle" v-if="travelBicycle != ''">Distance: {{ travelBicycle.distance }}; Time:
+                                {{ travelBicycle.time }};</p>
+
+                            <br v-if="travelBicycle != ''">
+
+                            <button class="styleIcons" v-if="travelWalking != ''">
+                                <i class="fa-solid fa-person-walking"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="travelWalking != ''">Walking: </h2>
+                            <p class="pStyle" v-if="travelWalking != ''">Distance: {{ travelWalking.distance }}; Time:
+                                {{ travelWalking.time }};</p>
+
+                            <br v-if="travelWalking != ''">
+
+                            <button class="styleIcons" v-if="travelCar != ''">
+                                <i class="fa-solid fa-car"></i>
+                            </button>
+                            <h2 class="hStyle" v-if="travelCar != ''">Car: </h2>
+                            <p class="pStyle" v-if="travelCar != ''">Distance: {{ travelCar.distance }}; Time:
+                                {{ travelCar.time }}; Average Cost: £{{ travelCar.cost }};</p>
+
+                            <br v-if="travelCar != ''">
+
+                            <button v-on:click="showCities(recommendations3.city.coordinates)" class="styleIcons"
+                                v-if="cities.length > 0">
+                                <i class="fa-solid fa-city"></i>
+                            </button>
+                            <h2 class="hStyle">City: </h2>
+                            <p class="pStyle"> {{ recommendations3.city.name + ";"}}
+                            </p>
+
+                            <br v-if="museums.length > 0">
+
+                            <button v-on:click="showMuseums(recommendations3.city.coordinates)" class="styleIcons"
+                                v-if="museums.length > 0">
+                                <i class="fa-solid fa-building-columns"></i>
+                            </button>
+                            <h3 class="hStyle" v-if="museums.length > 0">{{ museums.length }} Museums: </h3>
+                            <p class="pStyle" v-if="museums.length > 0" v-for="item in museums"> {{ item + ";"}}
+                            </p>
+
+                            <br v-if="galleries.length > 0">
+
+                            <button v-on:click="showGalleries(recommendations3.city.coordinates)" class="styleIcons"
+                                v-if="galleries.length > 0">
+                                <i class="fa-solid fa-image"></i>
+                            </button>
+                            <h4 class="hStyle" v-if="galleries.length > 0">{{ galleries.length }} Art Galleries:
+                            </h4>
+                            <p class="pStyle" v-if="galleries.length > 0" v-for="item in galleries"> {{ item +
+                                ";"}}
+                            </p>
+
+                            <br v-if="attractions.length > 0">
+
+                            <button v-on:click="showAttractions(recommendations3.city.coordinates)" class="styleIcons"
+                                v-if="attractions.length > 0">
+                                <i class="fa-solid fa-flag"></i>
+                            </button>
+                            <h5 class="hStyle" v-if="attractions.length > 0">{{ attractions.length }} Tourist
+                                Attractions: </h5>
+                            <p class="pStyle" v-if="attractions.length > 0" v-for="item in attractions"> {{ item
+                                +
+                                ";"}}
+                            </p>
+
+                            <br v-if="restaurants.length > 0">
+
+                            <button v-on:click="showRestaurants(recommendations3.city.coordinates)" class="styleIcons"
+                                v-if="restaurants.length > 0">
+                                <i class="fa-solid fa-utensils"></i>
+                            </button>
+                            <h6 class="hStyle" v-if="restaurants.length > 0">{{ restaurants.length }}
+                                Restaurants:
+                            </h6>
+                            <p class="pStyle" v-if="restaurants.length > 0" v-for="item in restaurants"> {{ item
+                                +
+                                ";"}}
+                            </p>
+
+                            <br v-if="mountains.length > 0">
+
+                            <button v-on:click="showMountains(recommendations3.city.coordinates)" class="styleIcons"
+                                v-if="mountains.length > 0">
+                                <i class="fa-solid fa-person-skiing"></i>
+                            </button>
+                            <h6 class="hStyle" v-if="mountains.length > 0"> {{ mountains.length }} Mountains:
+                            </h6>
+                            <p class="pStyle" v-if="mountains.length > 0" v-for="item in mountains"> {{ item +
+                                ";"}}
+                            </p>
+
+                            <br v-if="beaches.length > 0">
+
+                            <button v-on:click="showBeaches(recommendations3.city.coordinates)" class="styleIcons"
+                                v-if="beaches.length > 0">
+                                <i class="fa-solid fa-umbrella-beach"></i>
+                            </button>
+                            <h6 class="hStyle" v-if="beaches.length > 0">{{ beaches.length }} Beaches: </h6>
+                            <p class="pStyle" v-if="beaches.length > 0" v-for="item in beaches"> {{ item + ";"}}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <br>
+
+                <div class="row">
+
+                    <div class="styleWeather">
+
+                        <h1>8-Day Forecast</h1>
+
+                        <ul v-for="item in weatherForecast">
+                            <div class="output">
+                                <p class="pWeather">{{ item.date }}</p>
+                                <img class="imgWeather" v-bind:src="item.icon" alt="logo.png">
+                                <p class="pWeather">{{ item.day }} /</p>
+                                <p class="pWeather">{{ item.night }} °C</p>
+                                <p class="pWeather">{{ item.description }}</p>
+                            </div>
+                        </ul>
+
+                    </div>
+
+                    <div class="barChart" id="barChart"></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    </div>
+
+    </div>
+
+    </div>
+
+    <script type="module" src="recommendations.js"></script>
+
+</body>
+
+</html>
