@@ -1,4 +1,4 @@
-# Recommendation-System
+# Holiday-Recommendation-System
 
 When you search for a holiday on Google, you get sponsored results showing products that travel companies think you will want to buy and which they happen to sell. Unlikely to get the best or the cheapest holiday recommendations. Unlikely to match your requirements. The alternative is to pay a travel agent, which is expensive. Or do your holiday planning, which takes lots of time, requires visiting multiple websites, etc.
 A system was built to address this problem that generates sponsored ‘ads’ based on the user’s preferences and travel dates. This enables the user to get the best holiday working across different travel service providers. The main feature of the recommendations system is to generate recommendations based on user profiles using a Chrome plugin that will monitor if the users are looking for holidays. These recommendations are injected into the page with a similar appearance to the sponsored links.
