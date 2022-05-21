@@ -22,7 +22,7 @@
     "https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js",
     "https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css",
     "https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js",
-    "https://maps.googleapis.com/maps/api/js?key=AIzaSyCaeWrBuRjN36zXpYNQ608I3eG8QTil9Z4&callback=initMap&v=weekly"
+    "https://maps.googleapis.com/maps/api/js?key=&callback=initMap&v=weekly"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js https://maps.googleapis.com https://kit.fontawesome.com https://unpkg.com https://cdn.plot.ly/plotly-2.9.0.min.js https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js; object-src 'self'",
   "description": "Holiday Recommendation System"
