@@ -747,7 +747,7 @@ exports.handler = async (event) => {
                 let latitude = recommendations[j].city.coordinates[1];
                 let longitude = recommendations[j].city.coordinates[0];
 
-                await axios.get('https://api.openweathermap.org/data/2.5/onecall?lat=' + latitude + '&lon=' + longitude + '&units=metric&appid=eeecbaef7d8ebfceb80862aeda7561ee')
+                await axios.get('https://api.openweathermap.org/data/2.5/onecall?lat=' + latitude + '&lon=' + longitude + '&units=metric&appid=')
                     .then(response => {
 
                         for (let i = 0; i < response.data.daily.length; i++) {
@@ -794,9 +794,9 @@ exports.handler = async (event) => {
                 method: 'post',
                 url: 'https://test.api.amadeus.com/v1/security/oauth2/token',
                 data: qs.stringify({
-                    client_id: 'AjtrDKpOMs1ZuUFboQGAmf98KyRPRwFu',
-                    client_secret: 'VgGjDYG6IJUoGp2z',
-                    grant_type: 'client_credentials'
+                    client_id: '',
+                    client_secret: '',
+                    grant_type: ''
                 }),
                 headers: {
                     'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
