@@ -39,7 +39,7 @@ const loadTable = () => {
     for (let i = 0; i < dataTypes.length; i++) {
 
         axios
-            .get('https://maps.googleapis.com/maps/api/place/textsearch/json?query=' + dataTypes[i] + '%20in%20London&key=AIzaSyCaeWrBuRjN36zXpYNQ608I3eG8QTil9Z4')
+            .get('https://maps.googleapis.com/maps/api/place/textsearch/json?query=' + dataTypes[i] + '%20in%20London&key=')
             .then(res => {
 
                 const putPointInputs = res.data.results.map(function (location) {
